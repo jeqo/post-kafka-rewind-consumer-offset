@@ -3,11 +3,10 @@ package io.github.jeqo.posts.kafka.consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import static io.github.jeqo.posts.kafka.consumer.KafkaConsumerUtil.TOPIC;
 
@@ -26,11 +25,10 @@ public class KafkaConsumerFromBeginning {
             ConsumerRecords<String, String> records = consumer.poll(100);
 
             if (flag) {
-                List<PartitionInfo> topicInfo = consumer.partitionsFor(TOPIC);
-                topicInfo.stream().map(info -> new TopicPartition(info.topic(), info.partition()))
-                        .forEach(topicPartition ->
-                                consumer.seekToBeginning(
-                                        Arrays.asList(topicPartition)));
+                Set<TopicPartition> assignments = consumer.assignment();
+                assignments.forEach(topicPartition ->
+                        consumer.seekToBeginning(
+                                Arrays.asList(topicPartition)));
                 flag = false;
             }
 

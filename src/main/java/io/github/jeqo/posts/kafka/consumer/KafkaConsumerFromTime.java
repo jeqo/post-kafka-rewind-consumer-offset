@@ -4,7 +4,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 
 import java.time.Instant;
@@ -29,11 +28,11 @@ public class KafkaConsumerFromTime {
             ConsumerRecords<String, String> records = consumer.poll(100);
 
             if (flag) {
-                List<PartitionInfo> topicInfo = consumer.partitionsFor(TOPIC);
+                Set<TopicPartition> assignments = consumer.assignment();
                 Map<TopicPartition, Long> query = new HashMap<>();
-                for (PartitionInfo info : topicInfo) {
+                for (TopicPartition topicPartition : assignments) {
                     query.put(
-                            new TopicPartition(info.topic(), info.partition()),
+                            topicPartition,
                             Instant.now().minus(10, MINUTES).toEpochMilli());
                 }
 

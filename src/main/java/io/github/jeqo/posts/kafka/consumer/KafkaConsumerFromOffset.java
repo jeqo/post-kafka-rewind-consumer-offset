@@ -3,11 +3,10 @@ package io.github.jeqo.posts.kafka.consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import static io.github.jeqo.posts.kafka.consumer.KafkaConsumerUtil.TOPIC;
 import static io.github.jeqo.posts.kafka.consumer.KafkaConsumerUtil.createConsumer;
@@ -23,18 +22,18 @@ public class KafkaConsumerFromOffset {
 
         boolean flag = true;
 
+
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(100);
-
             if (flag) {
-                List<PartitionInfo> topicInfo = consumer.partitionsFor(TOPIC);
-                topicInfo.stream().map(info -> new TopicPartition(info.topic(), info.partition()))
-                        .forEach(topicPartition ->
-                                consumer.seek(
-                                        topicPartition,
-                                        90));
+                Set<TopicPartition> assignments = consumer.assignment();
+                assignments.forEach(topicPartition ->
+                        consumer.seek(
+                                topicPartition,
+                                90));
                 flag = false;
             }
+
 
             for (ConsumerRecord<String, String> record : records)
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
