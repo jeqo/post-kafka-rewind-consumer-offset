@@ -12,7 +12,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <kafka.version>0.10.1.0</kafka.version>
+        <kafka.version>0.10.2.2</kafka.version>
         <tamaya.version>0.2-incubating</tamaya.version>
     </properties>
 
